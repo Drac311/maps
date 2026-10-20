@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0a0e1a">
+  <title>FunRide 🏍️ — Rutas divertidas</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══ PANTALLA DE INICIO (sin mapa) ═══ -->
+  <div id="landing" class="screen">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+
+    <div class="landing-content">
+      <div class="greeting" id="greeting">Buenas tardes 👋</div>
+
+      <div class="logo-badge">
+        <span class="logo-emoji">🏍️</span>
+      </div>
+
+      <h1 class="app-title">Fun<span class="accent">Ride</span></h1>
+      <p class="subtitle">
+        Encuentra la ruta más <span class="accent-2">divertida</span>,<br>
+        no solo la más rápida
+      </p>
+
+      <div class="search-hero">
+        <span class="search-icon">📍</span>
+        <input id="destination" type="text" placeholder="¿A dónde vamos hoy?" autocomplete="off">
+        <button id="search-btn" class="search-go">Ir</button>
+      </div>
+
+      <div class="suggestions" id="suggestions">
+        <button class="chip" data-dest="Sierra de Madrid">🏔️ Sierra de Madrid</button>
+        <button class="chip" data-dest="Toledo">🏰 Toledo</button>
+        <button class="chip" data-dest="Segovia">🏛️ Segovia</button>
+        <button class="chip" data-dest="Aranjuez">🌳 Aranjuez</button>
+        <button class="chip" data-dest="El Escorial">⛰️ El Escorial</button>
+      </div>
+
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon">⚡</div>
+          <div class="feature-text"><strong>Rápida</strong><span>Llega antes</span></div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🏍️</div>
+          <div class="feature-text"><strong>Divertida</strong><span>Con curvas</span></div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🎯</div>
+          <div class="feature-text"><strong>Precisa</strong><span>Datos reales</span></div>
+        </div>
+      </div>
+
+      <div class="fun-fact" id="fun-fact"></div>
+
+      <div class="recent" id="recent-section" style="display:none">
+        <div class="recent-title">Búsquedas recientes</div>
+        <div class="recent-list" id="recent-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PANTALLA DE RESULTADOS (con mapa) ═══ -->
+  <div id="results" class="screen hidden">
+    <div id="map"></div>
+
+    <div class="top-bar">
+      <button id="back-btn" class="icon-btn" title="Volver">←</button>
+      <div class="mini-search">
+        <input id="destination2" type="text" placeholder="Cambiar destino...">
+      </div>
+      <button id="recenter-btn" class="icon-btn" title="Recentrar">🎯</button>
+    </div>
+
+    <div class="bottom-panel">
+      <div class="mode-toggle" data-mode="fast">
+        <button class="mode-btn active" data-mode="fast"><span>⚡</span> Más rápida</button>
+        <button class="mode-btn" data-mode="fun"><span>🏍️</span> Más divertida</button>
+        <div class="mode-indicator"></div>
+      </div>
+
+      <div class="route-stats" id="route-stats"></div>
+      <div class="compare-bar" id="compare-bar"></div>
+
+      <div class="fun-meter-wrap">
+        <div class="fun-meter-label">
+          <span>Nivel de diversión</span>
+          <span id="fun-percent">0%</span>
+        </div>
+        <div class="fun-meter">
+          <div class="fun-meter-fill" id="fun-meter-fill"></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="action-btn" id="share-btn">📤 Compartir</button>
+        <button class="action-btn primary" id="go-btn">▶ Iniciar ruta</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Overlays globales ═══ -->
+  <div class="loading-overlay hidden" id="loading">
+    <div class="loading-spinner"></div>
+    <div class="loading-text" id="loading-text">Calculando la ruta más divertida...</div>
+  </div>
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
