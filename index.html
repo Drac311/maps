@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0e1a">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>FunRide 🏍️ — Rutas divertidas</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="results" class="screen">
+    <div id="map" class="visible"></div>
+
+    <div class="top-bar">
+      <button id="back-btn" class="icon-btn hidden" title="Volver" aria-label="Volver">←</button>
+      <div class="mini-search">
+        <span class="ms-icon">🔍</span>
+        <input id="destination" type="search" autocomplete="off" enterkeyhint="search" aria-label="Buscar lugar" placeholder="Busca un lugar, restaurante o calle">
+        <button id="clear-btn" class="clear-btn hidden" aria-label="Borrar">✕</button>
+        <div id="ac-box" class="ac-box hidden"></div>
+      </div>
+      <button id="menu-btn" class="icon-btn" title="Menú" aria-label="Menú">☰</button>
+    </div>
+
+    <div class="fabs">
+      <button id="locate-btn" class="icon-btn" title="Mi ubicación" aria-label="Mi ubicación">📍</button>
+      <button id="loop-btn" class="icon-btn" title="Ruta circular" aria-label="Ruta circular">🔄</button>
+      <button id="recenter-btn" class="icon-btn hidden" title="Recentrar ruta" aria-label="Recentrar ruta">🎯</button>
+    </div>
+
+    <div id="map-hint" class="map-hint">👆 Toca el mapa para elegir un destino</div>
+
+    <div id="place-card" class="place-card hidden">
+      <button id="place-close" class="clear-btn place-close" aria-label="Cerrar">✕</button>
+      <div class="place-info">
+        <div class="place-name" id="place-name"></div>
+        <div class="place-addr" id="place-addr"></div>
+      </div>
+      <div class="place-dist" id="place-dist"></div>
+      <button id="fav-btn" class="action-btn">⭐ Guardar lugar</button>
+      <button id="route-btn" class="action-btn primary">🏍️ Ver rutas</button>
+    </div>
+
+    <div id="nav-banner" class="nav-banner hidden">
+      <div class="nav-icon" id="nav-icon">⬆️</div>
+      <div class="nav-txt"><div class="nav-dist" id="nav-dist">—</div><div class="nav-text" id="nav-text">—</div></div>
+    </div>
+    <div id="nav-bar" class="nav-bar hidden">
+      <div class="nav-stats">
+        <div><b id="nav-eta">--:--</b><small>Llegada</small></div>
+        <div><b id="nav-time">—</b><small>Resta</small></div>
+        <div><b id="nav-speed">0</b><small>km/h</small></div>
+      </div>
+      <button id="nav-mute" class="icon-btn" aria-label="Voz">🔊</button>
+      <button id="nav-gmaps" class="icon-btn" aria-label="Abrir en Google Maps" title="Abrir en Google Maps">🗺️</button>
+      <button id="nav-stop" class="icon-btn danger" aria-label="Salir de la navegación">✕</button>
+    </div>
+
+    <div id="loop-card" class="place-card hidden">
+      <div class="place-info"><div class="place-name">🔄 Ruta circular</div><div class="place-addr">Sal desde tu posición y vuelve al punto de partida</div></div>
+      <div class="place-dist" id="loop-val">40 km</div>
+      <input id="loop-km" class="range" type="range" min="10" max="200" step="5" value="40" aria-label="Distancia">
+      <button id="loop-go" class="action-btn primary">🏍️ Generar circuitos</button>
+      <button id="loop-cancel" class="action-btn">Cancelar</button>
+    </div>
+
+    <div id="drawer" class="drawer hidden">
+      <div class="drawer-head">
+        <div class="tabs">
+          <button class="tab active" data-tab="saved">⭐ Guardados</button>
+          <button class="tab" data-tab="comm">🌍 Comunidad</button>
+          <button class="tab" data-tab="friends">👥 Amigos</button>
+          <button class="tab" data-tab="account">👤 Cuenta</button>
+        </div>
+        <button id="drawer-close" class="clear-btn" aria-label="Cerrar">✕</button>
+      </div>
+      <div id="drawer-body" class="drawer-body"></div>
+    </div>
+
+    <div class="bottom-panel hidden" id="route-panel">
+      <div class="sheet-handle" id="sheet-handle" role="button" aria-label="Plegar panel"></div>
+      <div class="mode-toggle" data-mode="fast">
+        <button class="mode-btn active" data-mode="fast"><span>⚡</span> Rápida</button>
+        <button class="mode-btn" data-mode="bal"><span>⚖️</span> Mixta</button>
+        <button class="mode-btn" data-mode="fun"><span>🏍️</span> Divertida</button>
+        <div class="mode-indicator"></div>
+      </div>
+      <div class="route-stats" id="route-stats"></div>
+      <div class="compare-bar" id="compare-bar"></div>
+      <div class="fun-meter-wrap">
+        <div class="fun-meter-label"><span>Nivel de diversión</span><span id="fun-percent">0%</span></div>
+        <div class="fun-meter"><div class="fun-meter-fill" id="fun-meter-fill"></div></div>
+      </div>
+      <button class="action-btn full" id="save-route-btn">💾 Guardar ruta</button>
+      <div class="actions">
+        <button class="action-btn" id="share-btn">📤 Compartir</button>
+        <button class="action-btn primary" id="go-btn">▶ Iniciar ruta</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-overlay hidden" id="loading">
+    <div class="loading-spinner"></div>
+    <div class="loading-text" id="loading-text">Calculando la ruta más divertida...</div>
+  </div>
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+  <script src="online.js"></script>
+</body>
+</html>
